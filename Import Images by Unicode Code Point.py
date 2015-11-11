@@ -20,10 +20,12 @@ class EditTextDemo(object):
 		self.w.box2.extensiontext = TextBox((10, 0, -10, 22), text="Extension")
 		self.w.box2.extension = EditText((10, 20, 130, 22), placeholder=".jpeg")
 		self.w.pickPath = Button((10, 140, -10, 20), "Choose Path to Images", callback=self.pickPath)
-		self.w.testButton = Button((10, 170, -10, 20), "Run Script", callback=self.placeImages)
+		self.w.testButton = Button((220, 170, -10, 20), "Place Images", callback=self.placeImages)
+		self.w.createGlyphs = Button((10, 170, 200, 20), "Create Glyphs", callback=self.createGlyphs)
 		self.w.box.method = RadioGroup((10, 5, -10, 40),
                                 ["By Unicode Code Point [00E4]", "By Glyph Name [adieresis]"])
-		
+
+		self.w.box.method.set(1)
 		self.w.open()
         
 	def pickPath(self, sender):
@@ -33,13 +35,12 @@ class EditTextDemo(object):
 	def buttonshit(self, sender):
 		self.buttonCallback(self)
 	
-	def placeImages(self,sender):
+	def createGlyphs(self, sender):
 		pickpath = self.w.path.get()
 		pickmethod = self.w.box.method.get()
 		pickextension = self.w.box2.extension.get()
 		if pickextension == "":
 			pickextension = self.w.box2.extension.getPlaceholder()
-		
 		for file in os.listdir(pickpath):
 			if file.endswith(pickextension):
 				rfile = file.replace(pickextension, "")
@@ -48,7 +49,14 @@ class EditTextDemo(object):
 					Glyphs.font.glyphs.append(GSGlyph("uni" + rfile))
 				if pickmethod == 1:
 					Glyphs.font.glyphs.append(GSGlyph(rfile))
-			
+	
+	def placeImages(self, sender):
+		pickpath = self.w.path.get()
+		pickmethod = self.w.box.method.get()
+		pickextension = self.w.box2.extension.get()
+		if pickextension == "":
+			pickextension = self.w.box2.extension.getPlaceholder()
+		
 		masterID = Glyphs.font.masters[Glyphs.font.masterIndex].id
 		for glyph in Glyphs.font.glyphs:
 			if pickmethod == 0:
