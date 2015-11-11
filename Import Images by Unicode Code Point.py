@@ -1,9 +1,10 @@
 #MenuTitle: Import Images by Unicode Code Point
 # -*- coding: utf-8 -*-
 __doc__="""
-Imports images pre-named with unicode code point or glyph names into a coresponding Glyph and currently selected Master.
+Creates glyphs from images filenames and imports those images into a coresponding Glyph and currently selected Master.
 """
 
+import os
 import GlyphsApp
 from vanilla import *
 
@@ -13,7 +14,7 @@ class EditTextDemo(object):
 		self.w = Window((800, 200), title="Import Many Images")
 		self.w.box = Box((10, 45, -210, 60))
 		self.w.box2 = Box((600, 45, -10, 60))
-		self.w.instruction = TextBox((10, 10, -10, 22), text="Please specify image naming scheme, image extension, path to images.")
+		self.w.instruction = TextBox((10, 10, -10, 22), text="Please specify file naming scheme, file extension, path to images.")
 		self.w.path = TextBox((10, 115, -10, 22))
 		self.w.line2 = HorizontalLine((10, 35, -10, 1))
 		self.w.box2.extensiontext = TextBox((10, 0, -10, 22), text="Extension")
@@ -36,7 +37,17 @@ class EditTextDemo(object):
 		pickpath = self.w.path.get()
 		pickmethod = self.w.box.method.get()
 		pickextension = self.w.box2.extension.get()
+		if pickextension == "":
+			pickextension = self.w.box2.extension.getPlaceholder()
 		
+		for file in os.listdir(pickpath):
+			if file.endswith(pickextension):
+				rfile = file.replace(pickextension, "")
+				print(rfile)
+				if pickmethod == 0:
+					Glyphs.font.glyphs.append(GSGlyph("uni" + rfile))
+				if pickmethod == 1:
+					Glyphs.font.glyphs.append(GSGlyph(rfile))
 			
 		masterID = Glyphs.font.masters[Glyphs.font.masterIndex].id
 		for glyph in Glyphs.font.glyphs:
