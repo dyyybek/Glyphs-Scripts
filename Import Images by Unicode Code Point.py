@@ -10,7 +10,7 @@ from vanilla import *
 
 font = Glyphs.font
 
-class EditTextDemo(object):
+class ScriptInterface(object):
 	# interface
 	def __init__(self):
 		self.w = Window((800, 200), title="Import Many Images")
@@ -26,7 +26,6 @@ class EditTextDemo(object):
 		self.w.createGlyphs = Button((10, 170, 200, 20), "Create Glyphs", callback=self.createGlyphs) # Create Glyphs Button
 		self.w.box.method = RadioGroup((10, 5, -10, 40),
                                 ["By Unicode Code Point [00E4]", "By Glyph Name [adieresis]"])
-
 		self.w.box.method.set(1)
 		self.w.open()
     # function for Choose Path button
@@ -45,10 +44,11 @@ class EditTextDemo(object):
 			if file.endswith(pickextension):
 				rfile = file.replace(pickextension, "")
 				if pickmethod == 0:
-					Glyphs.font.glyphs.append(GSGlyph("uni" + rfile))
+					font.glyphs.append(GSGlyph("uni" + rfile))
 					font.glyphs["uni" + rfile].updateGlyphInfo()
 				if pickmethod == 1:
-					Glyphs.font.glyphs.append(GSGlyph(rfile))
+					font.glyphs.append(GSGlyph(rfile))
+					font.glyphs[rfile].updateGlyphInfo()
 		font.enableUpdateInterface()
 	# function for Place Images button
 	def placeImages(self, sender):
@@ -59,8 +59,8 @@ class EditTextDemo(object):
 		if pickextension == "":
 			pickextension = self.w.box2.extension.getPlaceholder()
 
-		masterID = Glyphs.font.masters[Glyphs.font.masterIndex].id
-		for glyph in Glyphs.font.glyphs:
+		masterID = font.masters[font.masterIndex].id
+		for glyph in font.glyphs:
 			if pickmethod == 0:
 				if glyph.unicode:
 					layer = glyph.layers[masterID]
@@ -71,4 +71,4 @@ class EditTextDemo(object):
 					layer.backgroundImage = GSBackgroundImage(pickpath + glyph.name + pickextension)
 		font.enableUpdateInterface()
 
-EditTextDemo()
+ScriptInterface()
