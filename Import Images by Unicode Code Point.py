@@ -8,6 +8,8 @@ import os
 import GlyphsApp
 from vanilla import *
 
+font = Glyphs.font
+
 class EditTextDemo(object):
 	# interface
 	def __init__(self):
@@ -27,12 +29,13 @@ class EditTextDemo(object):
 
 		self.w.box.method.set(1)
 		self.w.open()
-    # function for Choose Path button    
+    # function for Choose Path button
 	def pickPath(self, sender):
 		pickpath = GetFolder("Please choose a folder with images") + '/'
 		self.w.path.set(pickpath)
 	# function for Create Glyphs button
 	def createGlyphs(self, sender):
+		font.disableUpdateInterface()
 		pickpath = self.w.path.get()
 		pickmethod = self.w.box.method.get()
 		pickextension = self.w.box2.extension.get()
@@ -43,16 +46,19 @@ class EditTextDemo(object):
 				rfile = file.replace(pickextension, "")
 				if pickmethod == 0:
 					Glyphs.font.glyphs.append(GSGlyph("uni" + rfile))
+					font.glyphs["uni" + rfile].updateGlyphInfo()
 				if pickmethod == 1:
 					Glyphs.font.glyphs.append(GSGlyph(rfile))
+		font.enableUpdateInterface()
 	# function for Place Images button
 	def placeImages(self, sender):
+		font.disableUpdateInterface()
 		pickpath = self.w.path.get()
 		pickmethod = self.w.box.method.get()
 		pickextension = self.w.box2.extension.get()
 		if pickextension == "":
 			pickextension = self.w.box2.extension.getPlaceholder()
-		
+
 		masterID = Glyphs.font.masters[Glyphs.font.masterIndex].id
 		for glyph in Glyphs.font.glyphs:
 			if pickmethod == 0:
@@ -63,5 +69,6 @@ class EditTextDemo(object):
 				if glyph.name:
 					layer = glyph.layers[masterID]
 					layer.backgroundImage = GSBackgroundImage(pickpath + glyph.name + pickextension)
-				
+		font.enableUpdateInterface()
+
 EditTextDemo()
